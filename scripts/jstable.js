@@ -16,7 +16,7 @@ function CreateTable(myTable) {
 
         var tableObj = document.createElement("table");
         tableObj.id = myTable.tableId;
-        tableObj.className = 'table';
+        tableObj.className = myTable.tableStyleClass;
 
         var tableObjBody = document.createElement("tbody");
 
