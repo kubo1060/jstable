@@ -40,18 +40,30 @@
     <div class="row mt-5">                 
         <div class="col" id="table-div-1">
             <!--<input id="filter-input-1" class="input-form" placeholder="Filter..."/>-->
-            <table class="table table-hover" id="table-1">
+            <!--<table class="table table-hover" id="table-1">
                 <thead class="thead-light"></thead>
                 <tbody></tbody>
-            </table>            
+            </table>    -->        
             <!--<div id="selector-1" style="width: auto;"></div>-->
         </div>
     </div> 
 </div>
 
-<script src="scripts/jstable.js"></script>
+<script src="scripts/jstable.js"></script>  
 <script>
-    GenerateTable(2, 'textHere', 'text-danger', 'table-1', 'filter-input-1', 5, 'https://jsonplaceholder.typicode.com/users', '#selector-1'); 
+
+    //creating object with properties passed to table creaton function in jstable.js
+    var table = {        
+        tableId: "table-1",
+        tableDivId: "table-div-1",
+        tableJsonData: "https://jsonplaceholder.typicode.com/users",
+    };
+
+    //calling table creation function using object table, which represents out first table
+    $(document).ready(CreateTable(table));
+    
+
+    //GenerateTable(2, 'textHere', 'text-danger', 'table-1', 'filter-input-1', 5, 'https://jsonplaceholder.typicode.com/users', '#selector-1'); 
 </script>
 
 </body>

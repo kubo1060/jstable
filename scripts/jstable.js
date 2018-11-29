@@ -1,22 +1,42 @@
 /*
 * Name: Simple JSTable
-* Author: Jakub Ondrejkovic - jakub_ondrejkovic@tatrabanka.sk
-* Pagination Plugin: https://github.com/flaviusmatis/simplePagination.js/blob/master/tests/spec/SimplePaginationSpec.js
+* Author: Jakub Ondrejkovic - pilot1060@gmail.com
 */
 
-/*
+//function GenerateTable(hlightCol, hlightStr, hlightType,tableId, searchFormId, pageSize, jsonApiUrl, paginationSelector, hideCol) {
+function CreateTable(myTable) {
+    $.getJSON(myTable.tableJsonData, function (jsonData) {
+        /*
+         * Variables for general properties 
+         */
 
-MAIN START
+        /*
+         * Creating DOM objects and their nested objects including properties, simply creating table, thead, tbody dynamically
+         */
 
-*/
+        var tableObj = document.createElement("table");
+        tableObj.id = myTable.tableId;
+        tableObj.className = 'table';
 
-function GenerateTable(hlightCol, hlightStr, hlightType,tableId, searchFormId, pageSize, jsonApiUrl, paginationSelector, hideCol) {
-    $.getJSON(jsonApiUrl, function (jsonData) {
-        $("#" + tableId + " > tbody").empty();
-        $("#" + tableId + " > thead").empty();
+        var tableObjBody = document.createElement("tbody");
 
+        var tableObjHead = document.createElement("thead");
+
+        document.getElementById(myTable.tableDivId).appendChild(tableObj);
+        document.getElementById(tableObj.id).appendChild(tableObjHead);
+
+        document.getElementById(tableObj.id).appendChild(tableObjBody);
+
+        //document.getElementById()
+        //tableDiv = myTable.tableDivId;
+        //var tableDiv = $("#" + myTable.tableDivId)
+
+
+        $("#" + tableObj.id + " > tbody").empty();
+        $("#" + tableObj.id + " > thead").empty();
+
+        /*
         var itemsOnPage = pageSize;
-        /******* Hide table div when empty *******/
         if (Object.keys(jsonData).length === 0) {
             if ($("#" + tableId + "Div").hasClass("visible") === true && $("#" + tableId + "Div").hasClass("invisible") === false )
             $("#" + tableId + "Div").removeClass('visible');
@@ -28,7 +48,6 @@ function GenerateTable(hlightCol, hlightStr, hlightType,tableId, searchFormId, p
             $("#" + tableId + "Div").addClass('visible');
         }
 
-        /******* Hide pagination div when <= page *******/
         if (Object.keys(jsonData).length <= pageSize) {
             $(paginationSelector).removeClass('visible');
             $(paginationSelector).addClass('invisible');
@@ -39,7 +58,7 @@ function GenerateTable(hlightCol, hlightStr, hlightType,tableId, searchFormId, p
             $(paginationSelector).removeClass('invisible');
             $(paginationSelector).addClass('visible');
         }
-        /******* Hide Specific Column *******/
+        */
         //$("td:eq(" + hideCol +")").hide();
         /*$("#" + tableId + " tr").each(function (index, trow) {
             curRow = $(trow);
@@ -51,14 +70,13 @@ function GenerateTable(hlightCol, hlightStr, hlightType,tableId, searchFormId, p
         //console.log('Table: ' + tableId + 'SearchFormID: ' + searchFormId + 'paginationSelector: ' + paginationSelector);
 
         /******** Filter Functions *******/
-        $("#" + searchFormId + "").on("keyup", function () {
+        /*$("#" + searchFormId + "").on("keyup", function () {
             ClickedPage();
-           // ClickedPage(, pageSize);
             var value = $(this).val().toLowerCase();
-            $("#" + tableId + " tr").not('thead tr').filter(function () {
+            $("#" + tableObj.id + " tr").not('thead tr').filter(function () {
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
             });
-        });
+        });*/
 
         /******** Table Functions *******/
         //Ziskavam pole sltpcov, aby nazvy stlpcov v tabulke boli dynamicke
@@ -71,13 +89,14 @@ function GenerateTable(hlightCol, hlightStr, hlightType,tableId, searchFormId, p
                 i = i + 1;
             });
         });
+        console.log("Cols content: " + cols)
 
         //Appendovanie riadkov do tabulky a dynamickym generovanim stlpcov
         var colsLength = cols.length;
         var tdArrayString = '';
-        //console.log(colsLength);
+        console.log("Cols size: " + colsLength);
         for (var i = 0; i < colsLength; i++) { tdArrayString += "<th>" + cols[i] + "</th>" };
-        $("#" + tableId + " >thead").append("<tr>" + tdArrayString + "</tr>");
+        $("#" + tableObj.id + " >thead").append("<tr>" + tdArrayString + "</tr>");
         //console.log('String sltpca' + tdArrayString);
 
         //cyklus for prebehne cez cols pole, kde su nazvy stlpcov a vdaka nim ziska data do prislusnej bunky
@@ -85,19 +104,20 @@ function GenerateTable(hlightCol, hlightStr, hlightType,tableId, searchFormId, p
             var tdDataString = '';
             for (var i = 0; i < cols.length; i++) { tdDataString += "<td>" + json[index][cols[i]] + "</td>" };
             //console.log("DataString: " + tdDataString);
-            $("#" + tableId + " > tbody:last-child").append("<tr>" + tdDataString + "</tr>");
+            $("#" + tableObj.id + " > tbody:last-child").append("<tr>" + tdDataString + "</tr>");
         });
 
         //Zvyraznovanie riadku podla stlpca a jeho hodnoty
+        /*
         var rowCount = 0;
-        $("#" + tableId + " tr").each(function (index, trow) {
+        $("#" + tableObj.id + " tr").each(function (index, trow) {
             curRow = $(trow);
             var $tds = curRow.find('td');
             rowCount = index;
-            if ($.trim(curRow.find("td:eq(" + hlightCol + ")").html()).includes(hlightStr) == true /*== hlightStr*/) {
+            if ($.trim(curRow.find("td:eq(" + hlightCol + ")").html()).includes(hlightStr) == true) {
                 $(curRow).addClass(hlightType);
             }
-        });
+        });*/
 
         /******** Pager Functions ********
          * rowCount = pages cout
@@ -105,9 +125,9 @@ function GenerateTable(hlightCol, hlightStr, hlightType,tableId, searchFormId, p
          * pageNumber = desired page number */
         //var itemsOnPage = pageSize;
         //console.log(itemsOnPage);
-        var paginator = "#selector";
+        //var paginator = "#selector";
 
-        $(function () {
+        /*$(function () {
             $(paginationSelector).pagination({
                 items: rowCount,
                 itemsOnPage: itemsOnPage,
@@ -117,22 +137,19 @@ function GenerateTable(hlightCol, hlightStr, hlightType,tableId, searchFormId, p
         });
 
         var initStopIndex = 0 + itemsOnPage;
-        PageShow(tableId, null, 0, initStopIndex); //Initialization call after loading site
-        //console.log(paginator);
+        PageShow(tableObj.id, null, 0, initStopIndex);
         function ClickedPage(pageNumber) {
             var pageNumber = $(paginationSelector).pagination('getCurrentPage');
             var startIndex = itemsOnPage * pageNumber - itemsOnPage;
             stopIndex = startIndex + itemsOnPage;
-            //console.log('Calling PageShow() function... pagenumber: ' + pageNumber + 'start: ' + startIndex + 'stop: ' + stopIndex);
 
-            PageShow(tableId, null, startIndex, stopIndex);
+            PageShow(tableObj.id, null, startIndex, stopIndex);
         };
 
-        function PageShow(tableId, items, fromRow, toRow) {
-            //console.log('PageShow() - params: ' + tableId + " - " + fromRow + " - " + toRow);
-            var items = $("#" + tableId + " tbody tr");
+        function PageShow(id, items, fromRow, toRow) {
+            var items = $("#" + tableObj.id + " tbody tr");
             items.hide().slice(fromRow, toRow).show();
-        };
+        };*/
     });
 };
 //GenerateTable(3, 'false', 'table', 'input', 5);
