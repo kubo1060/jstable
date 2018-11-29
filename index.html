@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="row mt-4">
+        <div class="col">
+                <h1>Welcome to JSTable example site</h1>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col">
+            <h5>Purpose</h5>
+            This simple table is for everyone, who needs to show some json data in a table. Its very simple. Some functionalities will be hopefully added later.
+        </div>  
+    </div>
+    <div class="row mt-4">
+        <div class="col">
+            <h5>Example Data</h5>
+            Data for example are taken from <a href="https://jsonplaceholder.typicode.com">jsonplaceholder.typicode.com</a>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col">
+            <h5>Stylesheet</h5>
+            This page uses Bootstrap 4.1.3, from <a href="https://getbootstrap.com/">https://getbootstrap.com/</a>. You can do it by your own.
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col">
+            <h5>jQuery</h5>
+            Table uses jquery taken from <a href="https://jquery.com/">https://jquery.com//</a>
+        </div>
+    </div>
+    <div class="row mt-5">                 
+        <div class="col" id="table-div-1">
+            <!--<input id="filter-input-1" class="input-form" placeholder="Filter..."/>-->
+            <table class="table table-hover" id="table-1">
+                <thead class="thead-light"></thead>
+                <tbody></tbody>
+            </table>            
+            <!--<div id="selector-1" style="width: auto;"></div>-->
+        </div>
+    </div> 
+</div>
+
+<script src="scripts/jstable.js"></script>
+<script>
+    GenerateTable(2, 'textHere', 'text-danger', 'table-1', 'filter-input-1', 5, 'https://jsonplaceholder.typicode.com/users', '#selector-1'); 
+</script>
+
+</body>
+</html>
