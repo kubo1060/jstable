@@ -38,7 +38,7 @@
         </div>
     </div>
     <div class="row mt-5">                 
-        <div class="col" id="table-div-1">
+        <div class="col" id="table1">
             <!--<input id="filter-input-1" class="input-form" placeholder="Filter..."/>-->
             <!--<table class="table table-hover" id="table-1">
                 <thead class="thead-light"></thead>
@@ -55,9 +55,12 @@
     //creating object with properties passed to table creaton function in jstable.js
     var table = {        
         tableId: "table-1",
-        tableDivId: "table-div-1",
-        tableStyleClass: "table",
+        tableDivId: "table1",
+        tableStyleClass: "table table-hover",
+        tablePaginatorClass: "pagination",
         tableJsonData: "https://jsonplaceholder.typicode.com/users",
+
+        tablePageSize: 7, //default 5
     };
 
     

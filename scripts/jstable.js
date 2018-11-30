@@ -6,34 +6,78 @@
 //function GenerateTable(hlightCol, hlightStr, hlightType,tableId, searchFormId, pageSize, jsonApiUrl, paginationSelector, hideCol) {
 function CreateTable(myTable) {
     $.getJSON(myTable.tableJsonData, function (jsonData) {
-        /*
-         * Variables for general properties 
-         */
 
         /*
-         * Creating DOM objects and their nested objects including properties, simply creating table, thead, tbody dynamically
+         * 
+         * Variables for general properties, e.g pagesize
+         * 
          */
 
-        var tableObj = document.createElement("table");
-        tableObj.id = myTable.tableId;
-        tableObj.className = myTable.tableStyleClass;
+        var pageSize = 5;   //Page size default value is 5, if not set explicitly using myTable.tablePageSize
+        if (myTable.tablePageSize && myTable.tablePageSize > 0) {
+            pageSize = myTable.tablePageSize;
+        }
 
-        var tableObjBody = document.createElement("tbody");
+        /*
+         * 
+         * Creating DOM objects and their nested objects including properties, simply creating table, thead, tbody
+         * 
+         */
 
-        var tableObjHead = document.createElement("thead");
+        var filterInput = document.createElement("input");  //Object for input form to perform a filter and its properties
+        filterInput.style.backgroundColor = 'transparent';
+        filterInput.style.border = 'none';
+        filterInput.placeholder = "Search...";
 
+        var paginatorDiv = document.createElement(myTable.tableId + "-paginator");  //paginator id is a tableId+"-paginator"
+
+        var tableObj = document.createElement("table");     //Creating table element in a div specified by myTable.tableId
+        tableObj.id = myTable.tableId;                      //Assigning desired div id to a table element
+        tableObj.className = myTable.tableStyleClass;       //Applying class
+
+        var tableObjBody = document.createElement("tbody"); //Creating table body
+        var tableObjHead = document.createElement("thead"); //Creating table head - this is filled automatically
+
+        document.getElementById(myTable.tableDivId).appendChild(filterInput);
         document.getElementById(myTable.tableDivId).appendChild(tableObj);
+        document.getElementById(myTable.tableDivId).appendChild(paginatorDiv);
         document.getElementById(tableObj.id).appendChild(tableObjHead);
-
         document.getElementById(tableObj.id).appendChild(tableObjBody);
 
-        //document.getElementById()
-        //tableDiv = myTable.tableDivId;
-        //var tableDiv = $("#" + myTable.tableDivId)
+        /*
+         * 
+         * CreateTable main part - creating column names, rows...
+         * 
+         */
 
+        var cols = [];
+        var tdArrayString = '';
+        var i = 0;   
+        cols.empty;
+        $.each(jsonData.slice(Object.keys(jsonData).length - 1), function (key, value) { //creating table head
+            $.each(value, function (key, value) {
+                cols[i] = key;
+                i = i + 1;
+            });
+        });
 
-        $("#" + tableObj.id + " > tbody").empty();
-        $("#" + tableObj.id + " > thead").empty();
+        //Appendovanie riadkov do tabulky a dynamickym generovanim 
+        console.log("Cols size: " + cols.length);
+        for (var i = 0; i < cols.length; i++) { tdArrayString += "<th>" + cols[i] + "</th>" };
+        $("#" + tableObj.id + " >thead").append("<tr>" + tdArrayString + "</tr>");
+
+        FillTable(jsonData);                                //Calling table filling function
+
+        function FillTable(data) {
+            $.each($(jsonData), function (index, value) {
+                var tdDataString = '';
+                for (var i = 0; i < cols.length; i++) { tdDataString += "<td>" + jsonData[index][cols[i]] + "</td>" };
+                //console.log("DataString: " + tdDataString);
+                $("#" + tableObj.id + " > tbody:last-child").append("<tr>" + tdDataString + "</tr>");
+            });
+        }
+
+        
 
         /*
         var itemsOnPage = pageSize;
@@ -65,7 +109,6 @@ function CreateTable(myTable) {
             console.log("iterating...");
         });        //console.log(Object.keys(jsonData.result).length);*/
 
-        var json = jsonData; 
         //console.log(json);
         //console.log('Table: ' + tableId + 'SearchFormID: ' + searchFormId + 'paginationSelector: ' + paginationSelector);
 
@@ -80,32 +123,13 @@ function CreateTable(myTable) {
 
         /******** Table Functions *******/
         //Ziskavam pole sltpcov, aby nazvy stlpcov v tabulke boli dynamicke
-        var cols = [];
-        var i = 0;
-        cols.empty;
-        $.each(json.slice(Object.keys(json).length - 1), function (key, value) {
-            $.each(value, function (key, value) {
-                cols[i] = key;
-                i = i + 1;
-            });
-        });
-        console.log("Cols content: " + cols)
+        
 
-        //Appendovanie riadkov do tabulky a dynamickym generovanim stlpcov
-        var colsLength = cols.length;
-        var tdArrayString = '';
-        console.log("Cols size: " + colsLength);
-        for (var i = 0; i < colsLength; i++) { tdArrayString += "<th>" + cols[i] + "</th>" };
-        $("#" + tableObj.id + " >thead").append("<tr>" + tdArrayString + "</tr>");
+       
         //console.log('String sltpca' + tdArrayString);
 
-        //cyklus for prebehne cez cols pole, kde su nazvy stlpcov a vdaka nim ziska data do prislusnej bunky
-        $.each($(json), function (index, value) {
-            var tdDataString = '';
-            for (var i = 0; i < cols.length; i++) { tdDataString += "<td>" + json[index][cols[i]] + "</td>" };
-            //console.log("DataString: " + tdDataString);
-            $("#" + tableObj.id + " > tbody:last-child").append("<tr>" + tdDataString + "</tr>");
-        });
+        //rows appending
+        
 
         //Zvyraznovanie riadku podla stlpca a jeho hodnoty
         /*
