@@ -3,138 +3,64 @@
 * Author: Jakub Ondrejkovic - pilot1060@gmail.com
 */
 
-function CreateTable(myTable) {
-    $.getJSON(myTable.tableJsonData, function (jsonData) {
+function CreateTable(options) {
+    $.getJSON(options.jsonUrl, function (data) {
+    }).done(function (data) {
+        var pageSize = 5;
+        var pageNumber = 0;
+        $("#" + options.divId).append("<table id=\"" + options.id + "\" class=\"" + options.styleClass + "\"></table>");
+        $("#" + options.id).append("<thead></thead>");
+        $("#" + options.id).append("<tbody></tbody>");
 
-        /*************************************************
-         * 
-         * Variables for general properties, e.g pagesize
-         * 
-         ************************************************/
-
-        var pageSize = 5;   //Page size default value is 5, if not set explicitly using myTable.tablePageSize
-        if (myTable.tablePageSize && myTable.tablePageSize > 0) {
-            pageSize = myTable.tablePageSize;
-        }
-
-        var currentPage = 0;
-
-        /*************************************************
-         * 
-         * Creating DOM objects and their nested objects including properties, simply creating table, thead, tbody
-         * 
-         ************************************************/
-
-        var filterInput = document.createElement("input");  //Object for input form to perform a filter and its properties
-        filterInput.style.backgroundColor = 'transparent';
-        filterInput.style.border = 'none';
-        filterInput.placeholder = "Search...";
-
-        var paginatorDiv = document.createElement(myTable.tableId + "-paginator");  //paginator id is a tableId+"-paginator"
-
-        var tableObj = document.createElement("table");     //Creating table element in a div specified by myTable.tableId
-        tableObj.id = myTable.tableId;                      //Assigning desired div id to a table element
-        tableObj.className = myTable.tableStyleClass;       //Applying class
-
-        var tableObjBody = document.createElement("tbody"); //Creating table body
-        var tableObjHead = document.createElement("thead"); //Creating table head - this is filled automatically
-
-        document.getElementById(myTable.tableDivId).appendChild(filterInput);   //Filter form append
-        document.getElementById(myTable.tableDivId).appendChild(tableObj);  //table created from defined tableObj.id
-        document.getElementById(myTable.tableDivId).appendChild(paginatorDiv);  //Appending paginator div
-        document.getElementById(tableObj.id).appendChild(tableObjHead); //Table head
-        document.getElementById(tableObj.id).appendChild(tableObjBody); //Table body
-
-        
-        /*************************************************
-         * 
-         * CreateTable main part - creating column names, rows...
-         * 
-         ************************************************/
-
-        var cols = [];
-        var tdArrayString = '';
-        var i = 0;   
-        cols.empty;
-        $.each(jsonData.slice(Object.keys(jsonData).length - 1), function (key, value) { //creating table head
+        var cols = [], i = 0;
+        $.each(data.slice(Object.keys(data).length - 1), function (key, value) { //creating table head
             $.each(value, function (key, value) {
                 cols[i] = key;
                 i = i + 1;
             });
         });
 
-        //Appendovanie riadkov do tabulky a dynamickym generovanim 
-        console.log("Cols size: " + cols.length);
+        var tdArrayString = '';
         for (var i = 0; i < cols.length; i++) { tdArrayString += "<th>" + cols[i] + "</th>" };
-        $("#" + tableObj.id + " >thead").append("<tr>" + tdArrayString + "</tr>");
+        $("#" + options.id + " >thead").append("<tr>" + tdArrayString + "</tr>");
 
-        FillTable(jsonData);    //Filling table with data in jsonData object array
+        function ShowData(page, filter) {
+            var range = GetPageRange(page);
+            console.log(range);
+           // $(data).show();
 
-        /*************************************************
-         * 
-         * Functions 
-         * 
-         ************************************************/
-
-        function ShowPage(pageNumber) {
-            console.log("Showing Page: " + pageNumber);
-        };
-        ShowPage(5);
-        function FillTable(data) {
-            $.each($(jsonData), function (index, value) {
+            $.each($(data), function (index, value) { //.hide().slice(range[0],range[1]).show()
                 var tdDataString = '';
-                for (var i = 0; i < cols.length; i++) { tdDataString += "<td>" + jsonData[index][cols[i]] + "</td>" };
-                //console.log("DataString: " + tdDataString);
-                $("#" + tableObj.id + " > tbody:last-child").append("<tr>" + tdDataString + "</tr>");
+                for (var i = 0; i < cols.length; i++) {
+                    tdDataString += "<td>" + data[index][cols[i]] + "</td>"
+                };
+                $("#" + options.id + " > tbody:last-child").append("<tr>" + tdDataString + "</tr>");
             });
-            CreatePagination(pageSize);
-        }
+            $("#" + options.id).find("tr:gt(0)").hide().slice(range[0], range[1]).show();
+            CreatePagination();
+        };
 
+        function GetPageRange(page) {
+            var range = [];
+            range[0] = pageSize * pageNumber - pageNumber;
+            range[1] = range[0] + pageSize ;
+            return range
+        };
 
-        function CreatePagination(pageSize) {
-            var pageCount = Math.ceil(Object.keys(jsonData).length / pageSize);
-            console.log("Length of jsonData: " + pageCount);
-
-            Clear(paginatorDiv);
-
-            var buttonDiv = document.createElement("tablePagdiv");
-            paginatorDiv.appendChild(buttonDiv);
-
-            var buttonFirst = document.createElement("button");
-            buttonFirst.id = "buttonFirst";
-            buttonFirst.textContent = "First";
-
-            var buttonPrev = document.createElement("button");
-            buttonPrev.id = "buttonPrev";
-            buttonPrev.textContent = "Prev";
-
-            buttonDiv.appendChild(buttonFirst);
-            buttonDiv.appendChild(buttonPrev);
-
-            var buttons = "";
-            for (i = 1; i <= pageCount; i++) {
-                var button = document.createElement("button");
-                button.id = "button-p-" + i;
-                button.textContent = i;
-                button.className = "btn";
-                buttonDiv.appendChild(button);
-                //buttons += "<button id=\"button" + i + "\">" + i + "</button>";
+        function CreatePagination() {
+            var pageCount = Math.ceil(Object.keys(data).length / pageSize);
+            $("#" + options.divId).append("<ul id=\"" + options.id + "-paginator" + "\" class=\"pagination\"></ul>");
+            $("#" + options.id + "-paginator").append("<li class=\"page-item\"><a class=\"page-link\">First</a></li>");
+            $("#" + options.id + "-paginator").append("<li class=\"page-item\"><a class=\"page-link\">Previous</a></li>");
+            for (var i = 0; i < pageCount; i++) {
+                console.log("Heej " + i );
+                $("#" + options.id + "-paginator").append("<li class=\"page-item\"><a class=\"page-link\">" + i + "</a></li>");
             }
-            //buttonDiv.innerHTML += buttons;
-            var buttonNext = document.createElement("button");
-            buttonNext.id = "buttonNext";
-            buttonNext.textContent = "Next";
-            buttonDiv.appendChild(buttonNext);
-
-            var buttonLast = document.createElement("button");
-            buttonLast.id = "buttonLast";
-            buttonLast.textContent = "Last"
-            buttonDiv.appendChild(buttonLast);
-        }
-
-        function Clear(element) {
-            //document.getElementById(element).innerHTML = "";
-        }
+            $("#" + options.id + "-paginator").append("<li class=\"page-item\"><a class=\"page-link\">Next</a></li>");
+            $("#" + options.id + "-paginator").append("<li class=\"page-item\"><a class=\"page-link\">Last</a></li>");
+        };
+        
+        ShowData(pageNumber, null);
     });
+    
 };
-
