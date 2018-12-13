@@ -7,6 +7,8 @@ function CreateTable(options) {
     $.getJSON(options.jsonUrl, function (data) {
     }).done(function (data) {
         //var pageSize = 5;
+        var currPage = [];
+        currPage[options.id] = 1;
         var pageSize = [];
         pageSize[options.id] = options.pageSize;
 
@@ -42,16 +44,31 @@ function CreateTable(options) {
         };
 
         function ShowPage(tableid, pageno) {
-            $("#" + tableid).find("tr:gt(0)").show();
             var range = [];
-            //tableRowsCount = $("#" + tableid + " tr").length;
             var pageCount = Math.ceil(Object.keys(data).length / pageSize[tableid]);
-            if (pageno == "prev") { pageno = pageno - 1 }
-            if (pageno == "next") { pageno = pageno + 1 }
-            if (pageno == "last") { pageno = pageCount }
 
-            if (pageno >= 0 && pageno <= pageCount ) {
+            if (pageno == "prev" && parseInt(currPage[tableid]) > 1) {
+                pageno = parseInt(currPage[tableid]) - 1;
+                Number(pageno);
+                console.log("Page Number: " + pageno + ", Curr: " + currPage[tableid]);
+            }
+
+            if (pageno == "next" && Number(currPage[tableid]) < pageCount) {
+                pageno = parseInt(currPage[tableid]) + 1;
+                Number(pageno);
+                console.log("Page Number: " + pageno + ", Curr: " + currPage[tableid]);
+            }
+            else if (pageno == "last") {
+                pageno = pageCount;
+                Number(pageno);
+            };
+
+            if (pageno > 0 && (isNaN(pageno) != true)) {
+                $("#" + tableid).find("tr:gt(0)").show();
+
                 range = GetPageRange(pageno, tableid);
+                console.log("ShowPage: " + range[0] + " - " + range[1] + ", Pageno: " + pageno);
+                currPage[tableid] = pageno;
                 $("#" + tableid).find("tr:gt(0)").hide().slice(range[0], range[1]).show();
             }
         }
@@ -60,6 +77,7 @@ function CreateTable(options) {
             var range = [];
             range[0] = pageSize[tableid] * page - pageSize[tableid];
             range[1] = range[0] + pageSize[tableid];
+            console.log("From GetPageRange: " + range[0] + " - " + range[1]);
             /*
             range[0] = pageSize * page - page;
             range[1] = range[0] + pageSize;*/
@@ -73,9 +91,8 @@ function CreateTable(options) {
             $("#" + options.id + "-paginator").append("<li class=\"page-item\" id=\""+options.id+"-li-1\"><a class=\"page-link\" tbl-id=\"" + options.id + "\" page=\"1\" id=\"" + options.id + "-chpage-1\">First</a></li>");
             $("#" + options.id + "-paginator").append("<li class=\"page-item\" id=\"" + options.id + "-li-prev\"><a class=\"page-link\" tbl-id=\"" + options.id + "\" page=\"prev\" id=\"" + options.id + "-chpage-prev\">Previous</a></li>");
             
-            for (var i = 1, y = 0; i < pageCount; i++) {
+            for (var i = 1; i < pageCount; i++) {
                 $("#" + options.id + "-paginator").append("<li class=\"page-item\" id=\"" + options.id + "-li-" + i + "\"><a class=\"page-link\" tbl-id=\"" + options.id + "\" page=\"" + i + "\" id=\"" + options.id + "-chpage-" + i + "\">" + i + "</a></li>");
-                y++;
             }
             $("#" + options.id + "-paginator").append("<li class=\"page-item\" id=\"" + options.id +"-li-next\"><a class=\"page-link\" tbl-id=\"" + options.id + "\" page=\"next\" id=\"" + options.id + "-chpage-next\">Next</a></li>");
             $("#" + options.id + "-paginator").append("<li class=\"page-item\" id=\"" + options.id + "-li-last\"><a class=\"page-link\" tbl-id=\"" + options.id + "\" page=\"last\" id=\"" + options.id + "-chpage-last\">Last</a></li>");
