@@ -63,12 +63,16 @@ function CreateTable(options) {
                 Number(pageno);
             };
 
+
             if (pageno > 0 && (isNaN(pageno) != true)) {
                 $("#" + tableid).find("tr:gt(0)").show();
+                $("#" + tableid + "-paginator.pagination li").css("color", '');
 
                 range = GetPageRange(pageno, tableid);
                 console.log("ShowPage: " + range[0] + " - " + range[1] + ", Pageno: " + pageno);
                 currPage[tableid] = pageno;
+                $("#" + tableid + "-paginator.pagination li a.page-link[page=\"" + pageno + "\"][id*='chpage']").parent().css("color", '#66ccff');
+                $("#" + tableid + "-paginator.pagination li a.page-link[page=\"" + pageno + "\"][id$='chpage-first']").parent().css("color", '');
                 $("#" + tableid).find("tr:gt(0)").hide().slice(range[0], range[1]).show();
             }
         }
@@ -88,7 +92,7 @@ function CreateTable(options) {
             var pageCount = Math.ceil(Object.keys(data).length / pageSize[options.id] + 1 );
             console.log(pageCount);
             $("#" + options.divId).append("<ul id=\"" + options.id + "-paginator" + "\" class=\"pagination\"></ul>");
-            $("#" + options.id + "-paginator").append("<li class=\"page-item\" id=\""+options.id+"-li-1\"><a class=\"page-link\" tbl-id=\"" + options.id + "\" page=\"1\" id=\"" + options.id + "-chpage-1\">First</a></li>");
+            $("#" + options.id + "-paginator").append("<li class=\"page-item\" id=\""+options.id+"-li-1\"><a class=\"page-link\" tbl-id=\"" + options.id + "\" page=\"1\" id=\"" + options.id + "-chpage-first\">First</a></li>");
             $("#" + options.id + "-paginator").append("<li class=\"page-item\" id=\"" + options.id + "-li-prev\"><a class=\"page-link\" tbl-id=\"" + options.id + "\" page=\"prev\" id=\"" + options.id + "-chpage-prev\">Previous</a></li>");
             
             for (var i = 1; i < pageCount; i++) {
@@ -98,8 +102,6 @@ function CreateTable(options) {
             $("#" + options.id + "-paginator").append("<li class=\"page-item\" id=\"" + options.id + "-li-last\"><a class=\"page-link\" tbl-id=\"" + options.id + "\" page=\"last\" id=\"" + options.id + "-chpage-last\">Last</a></li>");
 
             $("#" + options.id + "-paginator.pagination li a.page-link").click(function () {
-                //$(this).parents().addClass("active");
-                $(this).parent().css("color: #3399ff");
                 ShowPage($(this).attr("tbl-id"), $(this).attr("page"));
             }); 
         };
