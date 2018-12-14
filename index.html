@@ -43,6 +43,9 @@
         <div class="row mt-5">
             <div class="col" id="table2"></div>
         </div>
+        <div class="row mt-5">
+            <div class="col" id="table3"></div>
+        </div>
     </div>
 
 <script src="scripts/jstable.js"></script>  
@@ -52,7 +55,6 @@
             id: "table-1",
             divId: "table1",
             styleClass: "table table-hover",
-            //paginatorClass: "pagination",
             jsonUrl: "https://jsonplaceholder.typicode.com/users",
             pageSize: 10, //default 5 
         };
@@ -60,12 +62,19 @@
             id: "table-2",
             divId: "table2",
             styleClass: "table table-hover",
-            //paginatorClass: "pagination",
             jsonUrl: "https://jsonplaceholder.typicode.com/albums",
+            pageSize: 10, //default 5 
+        };
+        var options3 = {
+            id: "table-3",
+            divId: "table3",
+            styleClass: "table table-hover",
+            jsonUrl: "https://jsonplaceholder.typicode.com/todos",
             pageSize: 10, //default 5 
         };
         CreateTable(options);
         CreateTable(options2);
+        CreateTable(options3);
     };
     $(document).ready(InitTable());
 </script>
