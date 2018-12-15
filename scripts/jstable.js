@@ -12,8 +12,16 @@ function CreateTable(options) {
     }).done(function (data) {
         var currPage = [];
         currPage[options.id] = 1;
+
         var pageSize = [];
-        pageSize[options.id] = options.pageSize;
+
+        if (options.pageSize) {
+            pageSize[options.id] = options.pageSize;
+        }
+        else {
+            pageSize[options.id] = 5;
+        }
+        
 
         var pageNumber = 1;
         $("#" + options.divId).append("<input id=\"" + options.id + "-filter\" style=\"border: none; width: 100%; padding: 5px; text-align: center; \" placeholder=\"Search\"></input>");
@@ -81,12 +89,12 @@ function CreateTable(options) {
                 $("#" + tableid + "-paginator.pagination li").css("color", '');
 
                 range = GetPageRange(pageno, tableid);
-                //console.log("ShowPage: " + range[0] + " - " + range[1] + ", Pageno: " + pageno);
+                console.log("ShowPage: " + range[0] + " - " + range[1] + ", Pageno: " + pageno);
                 currPage[tableid] = pageno;
                 $("#" + tableid + "-paginator.pagination li a.page-link[page=\"" + pageno + "\"][id*='chpage']").parent().css("color", '#66ccff');
                 $("#" + tableid + "-paginator.pagination li a.page-link[page=\"" + pageno + "\"][id$='chpage-first']").parent().css("color", '');
 
-                if (filter !== undefined ) {
+                if (filter !== undefined && filter != "") {
                     $("#" + tableid).find("tr:gt(0)").hide().slice(range[0], range[1]).show();//.toggle($(this).text().toLowerCase().indexOf(filter) > -1);
                     $("#" + tableid + " tr").not('thead tr').filter(function () {
                         $(this).toggle($(this).text().toLowerCase().indexOf(filter) > -1);
@@ -121,7 +129,7 @@ function CreateTable(options) {
 
         function CreatePagination() {
             var pageCount = Math.ceil(Object.keys(data).length / pageSize[options.id] + 1 );
-            $("#" + options.divId).append("<ul id=\"" + options.id + "-paginator" + "\" class=\"pagination\"></ul>");
+            $("#" + options.divId).append("<ul id=\"" + options.id + "-paginator" + "\" class=\"" + options.paginationStyle + "\"></ul>");
             $("#" + options.id + "-paginator").append("<li class=\"page-item\" id=\""+options.id+"-li-1\"><a class=\"page-link\" tbl-id=\"" + options.id + "\" page=\"1\" id=\"" + options.id + "-chpage-first\">First</a></li>");
             $("#" + options.id + "-paginator").append("<li class=\"page-item\" id=\"" + options.id + "-li-prev\"><a class=\"page-link\" tbl-id=\"" + options.id + "\" page=\"prev\" id=\"" + options.id + "-chpage-prev\">Previous</a></li>");
             
