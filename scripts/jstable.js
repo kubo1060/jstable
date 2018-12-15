@@ -16,7 +16,7 @@ function CreateTable(options) {
         pageSize[options.id] = options.pageSize;
 
         var pageNumber = 1;
-        $("#" + options.divId).append("<input id=\"" + options.id + "-filter\" style=\"border: none\" placeholder=\"Filter...\"></input>");
+        $("#" + options.divId).append("<input id=\"" + options.id + "-filter\" style=\"border: none; width: 100%; padding: 5px; text-align: center; \" placeholder=\"Search\"></input>");
         $("#" + options.divId).append("<table id=\"" + options.id + "\" class=\"" + options.styleClass + "\"></table>");
         $("#" + options.id).append("<thead></thead>");
         $("#" + options.id).append("<tbody></tbody>");
@@ -49,16 +49,14 @@ function CreateTable(options) {
                 };
                 $("#" + options.id + " > tbody:last-child").append("<tr>" + tdDataString + "</tr>");
             });
-            $("#" + options.id).find("tr:gt(0)").hide().slice(range[0], range[1]).show();
             CreatePagination();
+            //$("#" + options.id).find("tr:gt(0)").hide().slice(range[0], range[1]).show();
+            ShowPage(options.id, 1, "");
         };
 
         function ShowPage(tableid, pageno, filter) {
             var range = [];
             var pageCount = Math.ceil(Object.keys(data).length / pageSize[tableid]);
-
-            
-
 
             if (pageno == "prev" && parseInt(currPage[tableid]) > 1) {
                 pageno = parseInt(currPage[tableid]) - 1;
@@ -69,7 +67,7 @@ function CreateTable(options) {
             if (pageno == "next" && Number(currPage[tableid]) < pageCount) {
                 pageno = parseInt(currPage[tableid]) + 1;
                 Number(pageno);
-                //console.log("Page Number: " + pageno + ", Curr: " + currPage[tableid]);
+                console.log("Page Number: " + pageno + ", Curr: " + currPage[tableid]);
             }
             else if (pageno == "last") {
                 pageno = pageCount;
@@ -77,7 +75,7 @@ function CreateTable(options) {
             };
 
             if (pageno > 0 && (isNaN(pageno) != true)) {
-                $("#" + tableid).find("tr:gt(0)").show();
+               $("#" + tableid).find("tr:gt(0)").show();
                // $("#" + tableid + " tr:contains(" + filter + ")").hide();
                 
                 $("#" + tableid + "-paginator.pagination li").css("color", '');
@@ -88,54 +86,41 @@ function CreateTable(options) {
                 $("#" + tableid + "-paginator.pagination li a.page-link[page=\"" + pageno + "\"][id*='chpage']").parent().css("color", '#66ccff');
                 $("#" + tableid + "-paginator.pagination li a.page-link[page=\"" + pageno + "\"][id$='chpage-first']").parent().css("color", '');
 
-                if (filter !== "") {
+                if (filter !== undefined ) {
                     $("#" + tableid).find("tr:gt(0)").hide().slice(range[0], range[1]).show();//.toggle($(this).text().toLowerCase().indexOf(filter) > -1);
                     $("#" + tableid + " tr").not('thead tr').filter(function () {
                         $(this).toggle($(this).text().toLowerCase().indexOf(filter) > -1);
                     });
                     range = GetPageRange(currPage[tableid], tableid);
-                    $("#" + tableid).find("tr:contains('"+filter+"')").hide().slice(range[0], range[1]).show();
-                   // $("#" + tableid).find("tr:gt(0)")
+                    $("#" + tableid).find("tr:contains('" + filter + "')").hide().slice(range[0], range[1]).show();
+                    console.log("Filter not empty - " + filter + " Range: " + range[0] + " - " + range[1]);
                 }
 
                 else {
                     $("#" + tableid).find("tr:gt(0)").hide().slice(range[0], range[1]).show();
                 }
                 //$("#" + tableid + " tr:contains(" + filter + ")").hide();
+                //Hide page buttons 
+                var pageCurr = currPage[tableid];
+                //var pagenoHide = 0;
+                //Number(pagenoHide);
+                Number(pageCurr);
+                console.log("pageCurr: " + pageCurr);
+                $("[id^=" + tableid + "-chpage-]").show();
+                $("[id^=" + tableid + "-chpage-]:not([id^=" + tableid + "-chpage-f],[id^=" + tableid + "-chpage-p],[id^=" + tableid + "-chpage-n],[id^=" + tableid + "-chpage-l],[id=" + tableid + "-chpage-" + pageCurr + "])").hide();
+               
             }
-
-            //Filter function
-            /*if (filter) {
-                $("#" + tableid + " tr").not('thead tr').filter(function () {
-                    //console.log("Filter toggle: " + $(this).text());
-                    $(this).toggle($(this).text().toLowerCase().indexOf(filter) > -1);
-                    
-                });
-                range = GetPageRange(1, tableid);
-                $("#" + tableid).find("tr:gt(0)").not(":visible").hide().slice(range[0], range[1]).show();
-
-                console.log("TableID: " + tableid + ", Filter is: " + filter + ", Range: " + range[0] + " - " + range[1]);
-            }
-            else {
-                console.log("No filter set...");
-            }*/
         }
 
         function GetPageRange(page, tableid) {
             var range = [];
-
             range[0] = pageSize[tableid] * page - pageSize[tableid];
             range[1] = range[0] + pageSize[tableid];
-            //console.log("From GetPageRange: " + range[0] + " - " + range[1]);
-            /*
-            range[0] = pageSize * page - page;
-            range[1] = range[0] + pageSize;*/
             return range
         };
 
         function CreatePagination() {
             var pageCount = Math.ceil(Object.keys(data).length / pageSize[options.id] + 1 );
-            //console.log(pageCount);
             $("#" + options.divId).append("<ul id=\"" + options.id + "-paginator" + "\" class=\"pagination\"></ul>");
             $("#" + options.id + "-paginator").append("<li class=\"page-item\" id=\""+options.id+"-li-1\"><a class=\"page-link\" tbl-id=\"" + options.id + "\" page=\"1\" id=\"" + options.id + "-chpage-first\">First</a></li>");
             $("#" + options.id + "-paginator").append("<li class=\"page-item\" id=\"" + options.id + "-li-prev\"><a class=\"page-link\" tbl-id=\"" + options.id + "\" page=\"prev\" id=\"" + options.id + "-chpage-prev\">Previous</a></li>");
@@ -153,12 +138,8 @@ function CreateTable(options) {
 
         $("#" + options.id + "-filter").on("keyup", function () {
             var value = $(this).val().toLowerCase();
-            /*$("#" + tableId + " tr").not('thead tr').filter(function () {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-            });*/
-            ShowPage(this.id.slice(0, this.id.indexOf("-")+2), 1, value);
+            ShowPage(this.id.slice(0, this.id.indexOf("-filter")), 1, value);
         });
-
 
         ShowData(pageNumber, null);
     });
