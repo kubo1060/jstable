@@ -12,6 +12,14 @@ function CreateTable(options) {
     $.getJSON(options.jsonUrl, function (data) {
     }).done(function (data) {
 
+       
+
+
+        if (options.hideColls !== "" || options.hideColls !== "undefined" || options.hideColls !== null) {
+            
+        };
+        
+
         //Generate table id from its parent div id in case its not defined explicitly
         if (options.id == null || options.id == "undefined" || options.id == "" ) {
             options.id = options.divId + "-table";
@@ -76,6 +84,28 @@ function CreateTable(options) {
                 };
                 $("#" + options.id + " > tbody:last-child").append("<tr>" + tdDataString + "</tr>");
             });
+
+            //Hide specific columns, set by array or variable hideColls
+            var hideColls = [];
+            hideColls[options.id] = options.hideColls;
+
+            if (hideColls[options.id] != null ) {
+                if (hideColls[options.id].constructor === Array) {
+                    for (i = 1; i <= hideColls[options.id].length; i++) {
+                        console.log("Table " + options.id + " has defined hiden cols in array");
+                        $("#" + options.id + " td:nth-child(" + i + "),#" + options.id + " th:nth-child(" + i + ")").hide();
+                    }
+                } else if (hideColls[options.id] > 0) {
+                    for (i = 1; i <= hideColls[options.id].length; i++) {
+                    };
+                    console.log("Table " + options.id + " has defined hiden col");
+
+                    $("#" + options.id + " td:nth-child(3),#" + options.id + " th:nth-child(3)").hide();
+                }
+            };
+            
+        //$("#table1-table td:nth-child(3)").hide();
+
             CreatePagination();
             ShowPage(options.id, 1, "");
         };
