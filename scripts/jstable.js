@@ -1,7 +1,7 @@
 /*
 * Name: Simple JSTable
 * Author: Jakub Ondrejkovic - pilot1060@gmail.com
-* ToDos 
+* ToDos
  * TableName - optional
  * Own column names
  * filter - realtime
@@ -12,13 +12,11 @@ function CreateTable(options) {
     $.getJSON(options.jsonUrl, function (data) {
     }).done(function (data) {
 
-       
-
 
         if (options.hideColls !== "" || options.hideColls !== "undefined" || options.hideColls !== null) {
-            
+
         };
-        
+
 
         //Generate table id from its parent div id in case its not defined explicitly
         if (options.id == null || options.id == "undefined" || options.id == "" ) {
@@ -39,15 +37,15 @@ function CreateTable(options) {
         else {
             pageSize[options.id] = 5;
         }
-        
+
         //Generating html elements: input, table, thead, tbody
         var pageNumber = 1;
-        $("#" + options.divId).append("<input id=\"" + options.id + "-filter\" style=\"border: none; width: 100%; padding: 5px; text-align: center; \" placeholder=\"Search\"></input>");
+        $("#" + options.divId).append("<input id=\"" + options.id + "-filter\" class=\"" + options.inputClass + "\" placeholder=\"Search\"></input>");
         $("#" + options.divId).append("<table id=\"" + options.id + "\" class=\"" + options.styleClass + "\"></table>");
         $("#" + options.id).append("<thead></thead>");
         $("#" + options.id).append("<tbody></tbody>");
 
-        //Generating table header data, 
+        //Generating table header data,
         var cols = [], i = 0;
         $.each(data.slice(Object.keys(data).length - 1), function (key, value) {
             $.each(value, function (key, value) {
@@ -69,7 +67,7 @@ function CreateTable(options) {
             cols = options.headerArr;
             console.log("Using cutsom header");
         }*/
-       
+
 
         var tdArrayString = '';
         for (var i = 0; i < cols.length; i++) { tdArrayString += "<th>" + cols[i] + "</th>" };
@@ -77,7 +75,7 @@ function CreateTable(options) {
 
         function ShowData(page, filter) {
             var range = GetPageRange(page, options.id);
-            $.each($(data), function (index, value) { 
+            $.each($(data), function (index, value) {
                 var tdDataString = '';
                 for (var i = 0; i < cols.length; i++) {
                     tdDataString += "<td>" + data[index][cols[i]] + "</td>"
@@ -103,7 +101,7 @@ function CreateTable(options) {
                     $("#" + options.id + " td:nth-child(3),#" + options.id + " th:nth-child(3)").hide();
                 }
             };
-            
+
         //$("#table1-table td:nth-child(3)").hide();
 
             CreatePagination();
@@ -131,7 +129,7 @@ function CreateTable(options) {
             if (pageno > 0 && (isNaN(pageno) != true)) {
                $("#" + tableid).find("tr:gt(0)").show();
                // $("#" + tableid + " tr:contains(" + filter + ")").hide();
-                
+
                 $("#" + tableid + "-paginator.pagination li").css("color", '');
 
                 range = GetPageRange(pageno, tableid);
@@ -152,12 +150,12 @@ function CreateTable(options) {
                     $("#" + tableid).find("tr:gt(0)").hide().slice(range[0], range[1]).show();
                 }
 
-                //Hide page buttons 
+                //Hide page buttons
                 var pageCurr = currPage[tableid];
                 Number(pageCurr);
                 $("[id^=" + tableid + "-chpage-]").show();
                 $("[id^=" + tableid + "-chpage-]:not([id^=" + tableid + "-chpage-f],[id^=" + tableid + "-chpage-p],[id^=" + tableid + "-chpage-n],[id^=" + tableid + "-chpage-l],[id=" + tableid + "-chpage-" + pageCurr + "])").hide();
-               
+
             }
         }
 
@@ -173,7 +171,7 @@ function CreateTable(options) {
             $("#" + options.divId).append("<ul id=\"" + options.id + "-paginator" + "\" class=\"" + options.paginationStyle + "\"></ul>");
             $("#" + options.id + "-paginator").append("<li class=\"page-item\" id=\""+options.id+"-li-1\"><a class=\"page-link\" tbl-id=\"" + options.id + "\" page=\"1\" id=\"" + options.id + "-chpage-first\">First</a></li>");
             $("#" + options.id + "-paginator").append("<li class=\"page-item\" id=\"" + options.id + "-li-prev\"><a class=\"page-link\" tbl-id=\"" + options.id + "\" page=\"prev\" id=\"" + options.id + "-chpage-prev\">Previous</a></li>");
-            
+
             for (var i = 1; i < pageCount; i++) {
                 $("#" + options.id + "-paginator").append("<li class=\"page-item\" id=\"" + options.id + "-li-" + i + "\"><a class=\"page-link\" tbl-id=\"" + options.id + "\" page=\"" + i + "\" id=\"" + options.id + "-chpage-" + i + "\">" + i + "</a></li>");
             }
@@ -182,7 +180,7 @@ function CreateTable(options) {
 
             $("#" + options.id + "-paginator.pagination li a.page-link").click(function () {
                 ShowPage($(this).attr("tbl-id"), $(this).attr("page"));
-            }); 
+            });
         };
 
         $("#" + options.id + "-filter").on("keyup", function () {
@@ -192,5 +190,5 @@ function CreateTable(options) {
 
         ShowData(pageNumber, null);
     });
-    
+
 };
